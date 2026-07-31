@@ -1,183 +1,138 @@
-# Lawform 정적 사이트 (S3 + CloudFront)
+# Lawform 정적 사이트 (GitHub Pages · 완전 무료)
 
 이미지 한 장만 보여주는 정적 웹사이트입니다.  
-AWS 콘솔과 블루웹 DNS에서 직접 설정하는 순서입니다. Access Key나 비밀번호는 사용하지 않습니다.
+**호스팅 비용이 나오지 않도록 AWS(S3/CloudFront)는 사용하지 않습니다.**  
+무료인 [GitHub Pages](https://pages.github.com/) + 블루웹 DNS로 배포합니다.
+
+저장소: https://github.com/lawform0511/lawform.kr
 
 준비물:
 - `index.html`
-- `main-image.jpg` (직접 이 폴더에 넣기)
+- `main-image.png`
+- GitHub 계정 `lawform0511` (이미 연결됨)
+- 블루웹에 등록된 도메인 `lawform.kr`
+
+비용 안내:
+- GitHub Pages 호스팅: **무료**
+- HTTPS 인증서: GitHub가 **무료**로 발급
+- AWS 계정/S3/CloudFront: **만들지 마세요** (유료로 과금될 수 있음)
+- 도메인(`lawform.kr`) 연장 비용만 블루웹에서 원래대로 유지됩니다
 
 ---
 
-## 1. S3 버킷 생성
+## 1. 파일이 GitHub에 올라가 있는지 확인
 
-1. AWS 콘솔에 로그인합니다.
-2. 상단 검색창에서 **S3**를 검색해 들어갑니다.
-3. **버킷 만들기**를 클릭합니다.
-4. 버킷 이름을 입력합니다. 예: `lawform-kr-static`
-5. AWS 리전을 선택합니다. 예: `아시아 태평양(서울) ap-northeast-2`
-6. **퍼블릭 액세스 차단**은 켠 상태로 둡니다. (CloudFront로만 접근할 예정)
-7. 나머지 기본값을 유지한 뒤 **버킷 만들기**를 클릭합니다.
-
----
-
-## 2. index.html과 main-image.jpg 업로드
-
-1. 만든 버킷을 클릭해 들어갑니다.
-2. **업로드**를 클릭합니다.
-3. `index.html`과 `main-image.jpg`를 선택해 추가합니다.
-4. **업로드**를 클릭해 완료합니다.
-5. 버킷 루트에 두 파일이 있는지 확인합니다.
+1. https://github.com/lawform0511/lawform.kr 에 접속합니다.
+2. 아래 파일이 보이는지 확인합니다.
    - `index.html`
-   - `main-image.jpg`
+   - `main-image.png`
+   - `CNAME` (내용: `lawform.kr`)
+3. 없으면 이 폴더에서 GitHub에 푸시합니다.
 
 ---
 
-## 3. CloudFront 배포 생성
+## 2. GitHub Pages 켜기 (무료 호스팅)
 
-1. AWS 콘솔 상단 검색창에서 **CloudFront**를 검색해 들어갑니다.
-2. **배포 생성**을 클릭합니다.
-3. **원본 도메인**에서 방금 만든 S3 버킷을 선택합니다.
-4. 원본 액세스 설정에서 **Origin Access Control(OAC)**를 선택합니다.
-5. OAC가 없으면 **제어 설정 만들기**로 새로 만들고 선택합니다.
-6. 배포 생성 후 안내되는 **S3 버킷 정책 업데이트** 문구가 나오면, 안내에 따라 버킷 정책을 복사해 S3에 붙여넣습니다.
-7. 시청자용 프로토콜 정책은 **Redirect HTTP to HTTPS**로 설정합니다.
-8. **배포 생성**을 클릭합니다.
-9. 배포가 완료되면 CloudFront 도메인 이름(예: `dxxxxx.cloudfront.net`)을 메모합니다.
-
----
-
-## 4. 기본 루트 객체를 index.html로 설정
-
-1. CloudFront 배포 목록에서 방금 만든 배포를 클릭합니다.
-2. **일반** 탭에서 **편집**을 클릭합니다.
-3. **기본 루트 객체**에 `index.html`을 입력합니다.
-4. 변경 사항을 저장합니다.
-
-이렇게 하면 `https://도메인/` 접속 시 `index.html`이 열립니다.
+1. 저장소에서 **Settings**를 클릭합니다.
+2. 왼쪽 메뉴에서 **Pages**를 클릭합니다.
+3. **Build and deployment** → **Source**에서 **Deploy from a branch**를 선택합니다.
+4. Branch를 `main`으로 선택합니다.
+5. 폴더를 `/ (root)`로 선택합니다.
+6. **Save**를 클릭합니다.
+7. 잠시 후 같은 화면에 `https://lawform0511.github.io/lawform.kr/` 같은 주소가 보이면 배포된 것입니다.
+   - 커스텀 도메인을 연결하면 나중에 `https://lawform.kr`로 접속합니다.
 
 ---
 
-## 5. lawform.kr과 www.lawform.kr용 ACM 인증서 생성
+## 3. GitHub에 커스텀 도메인 등록
 
-1. AWS 콘솔 상단 검색창에서 **Certificate Manager(ACM)**를 검색해 들어갑니다.
-2. **인증서 요청**을 클릭합니다.
-3. **공인 인증서 요청**을 선택합니다.
-4. 도메인 이름을 추가합니다.
-   - `lawform.kr`
-   - `www.lawform.kr`
-5. 검증 방법은 **DNS 검증**을 선택합니다.
-6. 요청을 완료합니다.
-
----
-
-## 6. CloudFront 인증서는 us-east-1 리전에서 생성해야 한다는 안내
-
-중요:
-- CloudFront에 연결할 ACM 인증서는 반드시 **미국 동부(버지니아 북부) us-east-1** 리전에서 발급해야 합니다.
-- ACM 화면 오른쪽 위 리전 선택에서 **미국 동부(버지니아 북부)**를 선택한 뒤 인증서를 요청하세요.
-- 서울 리전에서 만든 인증서는 CloudFront에 연결할 수 없습니다.
-
----
-
-## 7. ACM에서 출력되는 DNS 검증용 CNAME을 블루웹 DNS에 등록하는 방법
-
-1. ACM 인증서 상세 화면에서 각 도메인별 **CNAME 이름**과 **CNAME 값**을 확인합니다.
-2. 블루웹 관리자 페이지에 로그인합니다.
-3. 도메인 `lawform.kr`의 **DNS 관리** 메뉴로 이동합니다.
-4. ACM이 안내한 검증용 레코드를 추가합니다.
-   - 유형: `CNAME`
-   - 호스트/이름: ACM에 나온 CNAME 이름
-   - 값/대상: ACM에 나온 CNAME 값
-5. `lawform.kr`와 `www.lawform.kr` 각각에 대해 필요한 CNAME을 모두 등록합니다.
-6. 수분~수십 분 후 ACM 상태가 **발급됨(Issued)**으로 바뀌는지 확인합니다.
+1. 저장소 **Settings → Pages**로 이동합니다.
+2. **Custom domain**에 `lawform.kr`을 입력합니다.
+3. **Save**를 클릭합니다.
+4. DNS 반영 후 GitHub가 도메인을 확인합니다.
+5. 확인이 끝나면 **Enforce HTTPS** 체크박스를 켭니다. (무료 HTTPS)
 
 참고:
-- 블루웹 입력란에 루트 도메인이 자동으로 붙는 경우, ACM CNAME 이름에서 `.lawform.kr` 부분은 빼고 앞부분만 입력해야 할 수 있습니다.
-- 등록 후 반영이 안 되면 잠시 기다린 뒤 ACM에서 상태를 다시 확인합니다.
+- `www.lawform.kr`도 같이 쓰려면 DNS에 www 레코드를 추가하면, GitHub Pages가 보통 apex ↔ www 리다이렉트를 처리합니다.
 
 ---
 
-## 8. CloudFront에 lawform.kr과 www.lawform.kr을 대체 도메인으로 등록
+## 4. 블루웹 DNS에서 기존 공사 중(호스팅) 레코드 제거
 
-1. CloudFront 배포 상세 화면으로 이동합니다.
-2. **일반** 탭의 **설정 편집**을 클릭합니다.
-3. **대체 도메인 이름(CNAME)**에 아래를 추가합니다.
-   - `lawform.kr`
-   - `www.lawform.kr`
-4. **사용자 지정 SSL 인증서**에서 us-east-1에서 발급된 인증서를 선택합니다.
-5. 변경 사항을 저장합니다.
+목표: 블루웹 공사 중 페이지가 더 이상 나오지 않게 하기
 
----
-
-## 9. 블루웹 DNS에서 기존 블루웹 호스팅 연결 레코드를 제거하거나 변경
-
-목표: 공사 중 페이지가 더 이상 나오지 않게 하기
-
-1. 블루웹 DNS 관리 화면으로 이동합니다.
-2. 기존에 블루웹 웹호스팅을 가리키던 레코드를 확인합니다.
-   - 예: `@` / `lawform.kr`의 A 레코드
-   - 예: `www`의 A 또는 CNAME 레코드
-3. 블루웹 호스팅 IP/서버를 가리키는 기존 레코드를 삭제하거나, 다음 단계에서 CloudFront를 가리키도록 변경합니다.
-4. 공사 중 페이지용 레코드가 남아 있으면 제거합니다.
+1. 블루웹 관리자에 로그인합니다.
+2. `lawform.kr` **DNS 관리**로 이동합니다.
+3. 블루웹 웹호스팅을 가리키던 기존 레코드를 삭제합니다.
+   - `@` / `lawform.kr`의 기존 A 레코드
+   - `www`의 기존 A 또는 CNAME 레코드
+4. 공사 중 페이지용 레코드가 남아 있으면 모두 제거합니다.
 
 ---
 
-## 10. 블루웹 DNS가 CloudFront 배포 주소를 가리키도록 설정
+## 5. 블루웹 DNS를 GitHub Pages로 연결 (무료)
 
-1. CloudFront 배포의 도메인 이름을 확인합니다. 예: `dxxxxx.cloudfront.net`
-2. 블루웹 DNS에서 아래처럼 설정합니다.
+GitHub 공식 안내 IP를 사용합니다.  
+참고: [GitHub Docs - Custom domain](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site)
 
-권장 설정:
-- `www` 레코드
-  - 유형: `CNAME`
-  - 호스트: `www`
-  - 값: `dxxxxx.cloudfront.net`
-- 루트 도메인(`lawform.kr`, `@`)
-  - 블루웹이 루트 도메인 CNAME을 허용하면 CloudFront 도메인을 가리키게 설정합니다.
-  - 루트 도메인 CNAME이 불가능하면, AWS에서 안내하는 방식(ALIAS에 해당하는 설정 또는 CloudFront가 안내하는 대상)으로 루트를 CloudFront에 연결합니다.
-  - 블루웹에서 루트 A 레코드만 가능한 경우, CloudFront는 고정 IP가 아니므로 `www`를 CloudFront로 연결하고 루트는 `www`로 리다이렉트하는 방식을 사용할 수 있습니다.
+### 루트 도메인 `lawform.kr` (A 레코드 4개)
 
-3. DNS 저장 후 반영될 때까지 기다립니다. 보통 수분에서 최대 수 시간이 걸릴 수 있습니다.
+호스트/이름을 `@` 또는 빈 값으로 하고, 아래 IP를 각각 A 레코드로 추가합니다.
+
+| 유형 | 호스트 | 값 |
+|------|--------|-----|
+| A | `@` | `185.199.108.153` |
+| A | `@` | `185.199.109.153` |
+| A | `@` | `185.199.110.153` |
+| A | `@` | `185.199.111.153` |
+
+### www 도메인 (CNAME 1개)
+
+| 유형 | 호스트 | 값 |
+|------|--------|-----|
+| CNAME | `www` | `lawform0511.github.io` |
+
+저장 후 DNS 반영까지 수분~수 시간이 걸릴 수 있습니다.
 
 ---
 
-## 11. lawform.kr 접속 확인
+## 6. lawform.kr 접속 확인
 
 1. 브라우저에서 `https://lawform.kr` 접속을 확인합니다.
 2. `https://www.lawform.kr` 접속도 확인합니다.
-3. 화면에 `main-image.jpg` 한 장만 보이는지 확인합니다.
+3. 화면에 `main-image.png` 한 장만 보이는지 확인합니다.
 4. 예전 블루웹 공사 중 페이지가 보이면:
-   - DNS 레코드가 아직 반영 중이거나
-   - 기존 블루웹 레코드가 남아 있거나
-   - 브라우저/CloudFront 캐시일 수 있습니다.
+   - DNS가 아직 반영 중이거나
+   - 기존 블루웹 레코드가 남아 있는 경우입니다.
 5. 필요하면 시크릿 창에서 다시 확인합니다.
+6. GitHub **Settings → Pages**에서 **Enforce HTTPS**가 켜져 있는지도 확인합니다.
+
+임시 확인용(도메인 연결 전):
+- `https://lawform0511.github.io/lawform.kr/`
 
 ---
 
-## 12. 파일을 수정했을 때 S3 재업로드와 CloudFront 캐시 무효화 방법
+## 7. 파일을 수정했을 때 업데이트 방법 (무료)
 
-파일이 바뀌었는데 사이트에 예전 내용이 보이면 아래를 진행합니다.
+AWS 재업로드/캐시 무효화는 필요 없습니다.
 
-### S3 재업로드
-1. S3 버킷으로 이동합니다.
-2. 수정한 파일(`index.html` 또는 `main-image.jpg`)을 다시 업로드합니다.
-3. 같은 파일명이면 덮어쓰기를 선택합니다.
-
-### CloudFront 캐시 무효화
-1. CloudFront 배포 상세 화면으로 이동합니다.
-2. **무효화** 탭을 클릭합니다.
-3. **무효화 생성**을 클릭합니다.
-4. 객체 경로에 아래를 입력합니다.
-   - `/*`  (전체 캐시 삭제)
-   - 또는 `/index.html` 과 `/main-image.jpg`
-5. 무효화를 생성하고 완료될 때까지 기다립니다.
-6. 브라우저에서 다시 접속해 변경 사항을 확인합니다.
+1. 이 폴더에서 `index.html` 또는 `main-image.png`를 수정합니다.
+2. GitHub에 다시 푸시합니다.
+3. 1~2분 뒤 사이트에 반영됩니다.
+4. 안 보이면 브라우저 강력 새로고침(Ctrl+F5)을 합니다.
 
 ---
 
 ## 로컬 확인 방법
 
-1. 이 폴더에 `main-image.jpg`를 넣습니다.
+1. 이 폴더에 `main-image.png`가 있는지 확인합니다.
 2. `index.html`을 브라우저로 엽니다.
 3. 이미지가 가운데 표시되는지 확인합니다.
+
+---
+
+## 절대 하지 말 것
+
+- AWS S3 / CloudFront / Route 53 생성
+- 유료 호스팅 상품 구매
+- Access Key, 비밀번호를 코드에 넣기
