@@ -1,5 +1,11 @@
 # Lawform 정적 사이트 (GitHub Pages · 완전 무료)
 
+> **2026-10-30부터 이 저장소는 루트 주소 `lawform.kr` 을 새 서비스 https://www.lawform.kr 로 넘기는 페이지만 둡니다.**
+> - 새 서비스는 AWS(CloudFront · 서울)에 따로 있고, `www` · `api` 는 블루웹 DNS CNAME 으로 그쪽을 가리킵니다.
+> - 루트(`lawform.kr`)는 CNAME 을 쓸 수 없고(메일 MX 때문), 블루웹 포워딩은 SSL 이 안 돼서(`https://lawform.kr` 보안 경고)
+>   루트 A 레코드는 지금처럼 GitHub Pages(185.199.108.153)에 두고, `index.html` · `404.html` 이 경로를 살려 www 로 넘깁니다.
+> - 예전 랜딩(그림 한 장, `main-image.png`)은 커밋 `2585694` 에 그대로 남아 있습니다. 아래 내용은 그때 설명입니다.
+
 이미지 한 장만 보여주는 정적 웹사이트입니다.  
 **호스팅 비용이 나오지 않도록 AWS(S3/CloudFront)는 사용하지 않습니다.**  
 무료인 [GitHub Pages](https://pages.github.com/) + 블루웹 DNS로 배포합니다.

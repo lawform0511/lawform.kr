@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Lawform</title>
+  <!-- 2026-10-30: 새 서비스 https://www.lawform.kr 로 넘기는 페이지.
+       블루웹 도메인 포워딩은 SSL 이 안 돼서(https://lawform.kr 이 보안 경고) 루트 주소는 GitHub Pages 에서 넘긴다.
+       같은 내용이 404.html 에도 있어 lawform.kr/어떤경로 → www.lawform.kr/어떤경로 로 간다. -->
+  <link rel="canonical" href="https://www.lawform.kr/">
+  <meta name="robots" content="noindex">
+  <meta http-equiv="refresh" content="0; url=https://www.lawform.kr/">
+  <script>
+    location.replace('https://www.lawform.kr' + location.pathname + location.search + location.hash);
+  </script>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #05070d;
+      color: #e8e4d8;
+      font-family: 'Noto Sans KR', system-ui, sans-serif;
+    }
+
+    a {
+      color: #d9b25f;
+    }
+  </style>
+</head>
+<body>
+  <p>AI Lawform 새 주소 <a href="https://www.lawform.kr/">www.lawform.kr</a> 로 이동하고 있어요.</p>
+</body>
+</html>
