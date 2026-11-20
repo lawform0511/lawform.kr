@@ -36,6 +36,12 @@
   <script>
     (function () {
       var search = location.search ? location.search + '&via=lawform.kr' : '?via=lawform.kr';
+      // 11/20: 이 넘김 페이지를 거치면 새 사이트엔 출처가 'lawform.kr' 로만 남아 방문 통계가 '기타'로 셌다 →
+      // 여기로 오기 전 출처(호스트만, 예: search.naver.com)를 lref 꼬리표로 넘긴다. 없으면(주소 직접 입력 · PC 카톡 등) 안 붙임 = '직접'
+      try {
+        var from = document.referrer ? new URL(document.referrer).host : '';
+        if (from && !/(^|\.)lawform\.kr$/i.test(from)) search += '&lref=' + encodeURIComponent(from);
+      } catch (e) {}
       var target = 'https://www.lawform.kr' + location.pathname + search + location.hash;
       var now = new Date().getTime();
       var recent = [];
